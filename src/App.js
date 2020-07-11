@@ -40,10 +40,10 @@ const NUMBER_STRINGS = [
 ];
 const styles = {
     offline: {
-        color: "#aaa",
+        color: "#666",
     },
     'offline-header': {
-        color: "#aaa",
+        color: "#666",
     }
 };
 
