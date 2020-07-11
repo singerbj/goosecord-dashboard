@@ -1,0 +1,36 @@
+{
+  "name": "goosecord-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm-run-all -p dev-watch electron-dev",
+    "electron-dev": "electron . --inspect --auto-open-devtools-for-tabs",
+    "electron-prod": "electron .",
+    "dev": "webpack --mode development",
+    "dev-watch": "webpack --mode development --watch",
+    "prod": "webpack --mode production",
+    "prod-watch": "webpack --mode production --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.10.4",
+    "@babel/plugin-transform-runtime": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-react": "^7.10.4",
+    "@babel/runtime": "^7.10.4",
+    "axios": "^0.19.2",
+    "babel-loader": "^8.1.0",
+    "electron": "^9.1.0",
+    "html-webpack-plugin": "^4.3.0",
+    "npm-run-all": "^4.1.5",
+    "q": "^1.5.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.5",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
+  }
+}
