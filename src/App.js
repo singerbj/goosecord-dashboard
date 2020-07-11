@@ -1,63 +1,94 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import q from 'q';
+import { processData } from './DataProcessor';
 
 const REQUEST_INTERVAL = 3000;
-const DEFAULT_STATE = { map: {}, list: [], error: null };
+const DEFAULT_STATE = {};
+const CATEGORY_LABELS = {
+    streaming: 'streaming',
+    inVoice: 'chatting',
+    online: 'online',
+    offline: 'offline'
+};
+const NUMBER_STRINGS = [
+    "zero",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "ten",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+    "fifteen",
+    "sixteen",
+    "seventeen",
+    "eighteen",
+    "nineteen",
+    "twenty",
+    "twenty one",
+    "twenty two",
+    "twenty three",
+    "twenty four",
+    "twenty five"
+];
+const styles = {
+    offline: {
+        color: "#aaa",
+    },
+    'offline-header': {
+        color: "#aaa",
+    }
+};
+
+const buildCategories = (categorizedData) => {
+    const keysArray = Object.keys(categorizedData).filter((key) => categorizedData[key].length > 0);
+    const categoryJSX = keysArray.map((category, i) => {
+        let activitiesPerCategory = categorizedData[category].filter((user) => {
+            return user.activities[0];
+        }).map((user, j) => {
+            return user.activities[0].toLowerCase();
+        });
+        activitiesPerCategory = [...new Set(activitiesPerCategory)];
+        return (
+            <div 
+                key={i}
+                style={styles[category] || {}}
+            >
+                <h3 style={styles[category + '-header'] || {}}>{ CATEGORY_LABELS[category] }</h3>
+                { 
+                    categorizedData[category].map((user, j) => {
+                        return (
+                            <span 
+                                key={j}
+                                style={styles[category + '-name'] || {}}
+                            > 
+                                { user.displayName }
+                            </span>
+                        );
+                    }).reduce((prev, curr, i) => [prev, (<span className="deemphasized-text" > and </span>), curr])
+                }
+                <div className="deemphasized-text">
+                    { activitiesPerCategory.length > 0 && 'playing ' + activitiesPerCategory.join(', ') }
+                </div>
+            </div>
+        );
+    });
+    return (<>{ categoryJSX }</>);
+}
 
 const getData = async (setState, lastStartTime = 0) => {
     const startTime = Date.now();
     try {
         const res = await axios.get('http://207.153.21.155:1337/who_is_online');
         if(res && res.data){
-            let onlineUsers = 0;
-            let list = Object.keys(res.data).map((displayName) => {
-                let user = res.data[displayName];
-                if(user.status === 'online'){
-                    onlineUsers += 1;
-                }
-                return {
-                    ...user,
-                    activities: user.activities.filter((a) => a.indexOf('®') < 0 && a.indexOf('otify') < 0),
-                    displayName
-                };
-            });
-            list = list.sort((a, b) => {
-                var nameA = a.displayName.toUpperCase();
-                var nameB = b.displayName.toUpperCase();
-                var activityA = a.activities[0];
-                var activityB = b.activities[0];
-                var onlineTest = ((b.status === 'online') - (a.status === 'online'));
-                var numberOfActivities = b.activities.length - a.activities.length;
-                if(onlineTest === 0){
-                    if(numberOfActivities !== 0){
-                        return numberOfActivities;                    
-                    }
-                    if(numberOfActivities !== 0){
-                        return numberOfActivities;                    
-                    }
-                    if (activityA < activityB) {
-                        return -1;
-                    }
-                    if (activityA > activityB) {
-                        return 1;
-                    }
-                    if (nameA < nameB) {
-                        return -1;
-                    }
-                    if (nameA > nameB) {
-                        return 1;
-                    }
-                    return 0;       
-                } else {
-                    return onlineTest;
-                }
-            });
-            setState({                
-                map: res.data,
-                list,
-                onlineUsers 
-            });
+            setState(processData(res.data));
         } else {
             setState(DEFAULT_STATE);
         }
@@ -88,28 +119,13 @@ const App = () => {
 
     return (
         <div>
-            <div style={{ color: 'blue'}}>
-                { state.onlineUsers } gamers gaming
+            <div className="background">
+                { state.onlineUsers }
             </div>
-            { 
-                state.list.map((user, i) => {
-                    return (
-                        <div key={i} style={{ color: user.status === 'online' ? 'green' : 'inherit'}}>
-                            { user.displayName }
-                            { user.activities.length > 0 && 
-                                <>
-                                    <span>
-                                        { " is playing " }
-                                    </span>
-                                    <span style={{ color: 'blue'}}>
-                                        { user.activities.join(', ') }
-                                    </span>
-                                </>
-                            }
-                        </div>
-                    );
-                })
-            }
+            <div className="foreground">
+                <h1 className="main-title">{ NUMBER_STRINGS[state.onlineUsers] || state.onlineUsers } gamers online</h1> 
+                { state.categorizedMap && buildCategories(state.categorizedMap) }
+            </div>
         </div>
     );
 };
