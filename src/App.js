@@ -1,6 +1,37 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { processData } from './DataProcessor';
+const PSN = require('pxs-psn-api');
+
+const psn = new PSN({
+    lang: "en",  //(default value en)
+    region: "hk",  // server region(default value us)
+    refresh_token: null, //refresh_token(default value null)
+    access_token: null  //access_token(default value null)
+});
+
+async function main() {
+    try {
+        console.log(process.env.npsso);
+
+        // access token is used to call other api, and refresh token is used to get new access_token when it's expired
+        await psn.auth(process.env.npsso);
+        // const { access_token, refresh_token }
+
+        console.log(psn.access_token, psn.refresh_token);
+ 
+        // get user profile with access_token
+        const profile = await psn.getProfile("DJ-K0SH3R");
+        console.log(profile);
+        const summary = await psn.getUserFriends("DJ-K0SH3R");
+        console.log(summary);
+ 
+    } catch (e) {
+        console.log('error: ', e);
+    }
+}
+ 
+main();
 
 const REQUEST_INTERVAL = 3000;
 const DEFAULT_STATE = {};
@@ -47,6 +78,18 @@ const styles = {
     }
 };
 
+const getPSNFriends = () => {
+    return new Promise((resolve, reject) => {
+        psn.getFriends((error, data) => {
+            if(error){
+                reject(error);
+            }
+            resolve(data);
+        });
+    });
+};
+
+
 const buildCategories = (categorizedData) => {
     const keysArray = Object.keys(categorizedData).filter((key) => categorizedData[key].length > 0);
     const categoryJSX = keysArray.map((category, i) => {
@@ -58,7 +101,7 @@ const buildCategories = (categorizedData) => {
         activitiesPerCategory = [...new Set(activitiesPerCategory)];
         return (
             <div 
-                key={i}
+                key={i+'i'}
                 style={styles[category] || {}}
             >
                 <h3 style={styles[category + '-header'] || {}}>{ CATEGORY_LABELS[category] }</h3>
@@ -66,13 +109,13 @@ const buildCategories = (categorizedData) => {
                     categorizedData[category].map((user, j) => {
                         return (
                             <span 
-                                key={j}
+                                key={j+'j'}
                                 style={styles[category + '-name'] || {}}
                             > 
                                 { user.displayName }
                             </span>
                         );
-                    }).reduce((prev, curr, i) => [prev, (<span className="deemphasized-text" > and </span>), curr])
+                    }).reduce((prev, curr, k) => [prev, (<span className="deemphasized-text" key={k+'k'}> and </span>), curr])
                 }
                 <div className="deemphasized-text">
                     { activitiesPerCategory.length > 0 && 'playing ' + activitiesPerCategory.join(', ') }
@@ -115,6 +158,14 @@ const App = () => {
 
     useEffect(() => {
         getData(setState);
+
+        var iframe = document.getElementById('iframe');
+        let foo = function(){
+            console.log ("Look at me, executed inside an iframe!");
+            var chatBox = document.getElementById('chatbox');
+            chatBox.removeChild();
+        };
+        iframe.window.eval(foo.toString());
     }, []);
 
     return (
