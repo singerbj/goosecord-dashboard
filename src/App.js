@@ -52,9 +52,9 @@ const buildCategories = (categorizedData) => {
     const keysArray = Object.keys(categorizedData).filter((key) => categorizedData[key].length > 0);
     const categoryJSX = keysArray.map((category) => {
         let activitiesPerCategory = categorizedData[category].filter((user) => {
-            return user.activities[0];
+            return user.activities[0] ? user.activities[0].replace("™",'') : undefined;
         }).map((user, j) => {
-            return user.activities[0].toLowerCase();
+            return user.activities[0]? user.activities[0].replace("™",'').toLowerCase() : undefined;
         });
         activitiesPerCategory = [...new Set(activitiesPerCategory)];
         return (
@@ -84,7 +84,7 @@ const buildCategories = (categorizedData) => {
     return (<>{ categoryJSX }</>);
 }
 
-const getData = async (setState, lastStartTime = 0) => {
+const getData = async (setState) => {
     const startTime = Date.now();
     try {
         const res = await axios.get('http://207.153.21.155:1337/who_is_online');
@@ -124,7 +124,7 @@ const App = () => {
                 { state.onlineUsers }
             </div>
             <div className="foreground">
-                <h1 className="main-title">{ NUMBER_STRINGS[state.onlineUsers] || state.onlineUsers } gamers online</h1> 
+                <h1 className="main-title">{ NUMBER_STRINGS[state.onlineUsers] || state.onlineUsers } players online</h1> 
                 { state.categorizedMap && buildCategories(state.categorizedMap) }
             </div>
         </div>
