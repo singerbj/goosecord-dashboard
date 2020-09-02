@@ -20,8 +20,7 @@ const createWindow = () => {
         win.webContents.openDevTools()
     }
     
-    console.log("MODE ======> " + process.env.mode);
-    console.log(process.argv);
+    console.log("MODE ======> " + process.argv[2]);
 };
 
 app.whenReady().then(createWindow);
