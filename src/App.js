@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { processData } from './DataProcessor';
+import uuid from 'react-uuid'
 
 const REQUEST_INTERVAL = 3000;
 const DEFAULT_STATE = {};
@@ -49,7 +50,7 @@ const styles = {
 
 const buildCategories = (categorizedData) => {
     const keysArray = Object.keys(categorizedData).filter((key) => categorizedData[key].length > 0);
-    const categoryJSX = keysArray.map((category, i) => {
+    const categoryJSX = keysArray.map((category) => {
         let activitiesPerCategory = categorizedData[category].filter((user) => {
             return user.activities[0];
         }).map((user, j) => {
@@ -58,21 +59,21 @@ const buildCategories = (categorizedData) => {
         activitiesPerCategory = [...new Set(activitiesPerCategory)];
         return (
             <div 
-                key={i}
+                key={uuid()}
                 style={styles[category] || {}}
             >
                 <h3 style={styles[category + '-header'] || {}}>{ CATEGORY_LABELS[category] }</h3>
                 { 
-                    categorizedData[category].map((user, j) => {
+                    categorizedData[category].map((user) => {
                         return (
                             <span 
-                                key={j}
+                                key={uuid()}
                                 style={styles[category + '-name'] || {}}
                             > 
                                 { user.displayName }
                             </span>
                         );
-                    }).reduce((prev, curr, i) => [prev, (<span className="deemphasized-text" > and </span>), curr])
+                    }).reduce((prev, curr) => [prev, (<span key={uuid()} className="deemphasized-text" > and </span>), curr])
                 }
                 <div className="deemphasized-text">
                     { activitiesPerCategory.length > 0 && 'playing ' + activitiesPerCategory.join(', ') }
