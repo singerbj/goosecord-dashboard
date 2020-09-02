@@ -11,7 +11,13 @@
     "dev": "webpack --mode development",
     "dev-watch": "webpack --mode development --watch",
     "prod": "webpack --mode production",
-    "prod-watch": "webpack --mode production --watch"
+    "prod-watch": "webpack --mode production --watch",
+    "postinstall": "npm run requirements-check",
+    "deploy": "ssh pi@kiosk 'source ~/.profile && cd Mama-Goose && npm run restart'",
+    "restart": "forever stopall; git pull; npm install; forever start -c 'start-prod' ./"
+  },
+  "engines": {
+    "node": ">=14.0.0 <15.0.0"
   },
   "author": "",
   "license": "ISC",
