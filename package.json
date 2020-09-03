@@ -13,9 +13,9 @@
     "prod": "webpack --mode production",
     "prod-watch": "webpack --mode production --watch",
     "requirements-check": "node checkVersion.js",
-    "postinstall": "yarn requirements-check",
-    "deploy": "ssh pi@kiosk 'source ~/.profile && cd goosecord-dashboard && yarn restart'",
-    "restart": "forever stopall; git pull; yarn; forever start -c 'start-prod' ./"
+    "postinstall": "npm run requirements-check",
+    "deploy": "ssh pi@kiosk 'source ~/.profile && cd goosecord-dashboard && npm run restart'",
+    "restart": "forever stopall; git pull; npm install --arch=armv7; export DISPLAY=:0; forever start -c 'start-prod' ./"
   },
   "engines": {
     "node": ">=11.0.0 <12.0.0"
