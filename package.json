@@ -17,7 +17,7 @@
     "restart": "forever stopall; git pull; npm install; forever start -c 'start-prod' ./"
   },
   "engines": {
-    "node": ">=14.0.0 <15.0.0"
+    "node": ">=12.0.0 <13.0.0"
   },
   "author": "",
   "license": "ISC",
