@@ -12,12 +12,13 @@
     "dev-watch": "webpack --mode development --watch",
     "prod": "webpack --mode production",
     "prod-watch": "webpack --mode production --watch",
-    "postinstall": "npm run requirements-check",
-    "deploy": "ssh pi@kiosk 'source ~/.profile && cd Mama-Goose && npm run restart'",
-    "restart": "forever stopall; git pull; npm install; forever start -c 'start-prod' ./"
+    "requirements-check": "node checkVersion.js",
+    "postinstall": "yarn requirements-check",
+    "deploy": "ssh pi@kiosk 'source ~/.profile && cd Mama-Goose && yarn restart'",
+    "restart": "forever stopall; git pull; yarn; forever start -c 'start-prod' ./"
   },
   "engines": {
-    "node": ">=12.0.0 <13.0.0"
+    "node": ">=11.0.0 <12.0.0"
   },
   "author": "",
   "license": "ISC",
