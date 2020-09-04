@@ -15,7 +15,7 @@
     "requirements-check": "node checkVersion.js",
     "postinstall": "npm run requirements-check",
     "deploy": "ssh pi@kiosk 'source ~/.profile && cd goosecord-dashboard && npm run restart'",
-    "restart": "forever stopall; git pull; npm install --arch=armv7; export DISPLAY=:0; npm run start-prod;"
+    "restart": "forever stopall; git pull; npm install --arch=armv7; npm run start-prod;"
   },
   "engines": {
     "node": ">=11.0.0 <12.0.0"
