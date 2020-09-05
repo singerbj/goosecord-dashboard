@@ -6,7 +6,6 @@ const APP_DIR = path.resolve('./src');
 
 module.exports = {
     mode: isProd ? 'production' : 'development',
-    target: 'electron-renderer',
     entry: {
         main: path.resolve(APP_DIR, 'index.js')
     },

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { processData } from './DataProcessor';
+<<<<<<< HEAD
 const PSN = require('pxs-psn-api');
 
 const psn = new PSN({
@@ -32,6 +33,9 @@ async function main() {
 }
  
 main();
+=======
+import uuid from 'react-uuid'
+>>>>>>> origin/master
 
 const REQUEST_INTERVAL = 3000;
 const DEFAULT_STATE = {};
@@ -92,30 +96,30 @@ const getPSNFriends = () => {
 
 const buildCategories = (categorizedData) => {
     const keysArray = Object.keys(categorizedData).filter((key) => categorizedData[key].length > 0);
-    const categoryJSX = keysArray.map((category, i) => {
+    const categoryJSX = keysArray.map((category) => {
         let activitiesPerCategory = categorizedData[category].filter((user) => {
-            return user.activities[0];
+            return user.activities[0] ? user.activities[0].replace("™",'') : undefined;
         }).map((user, j) => {
-            return user.activities[0].toLowerCase();
+            return user.activities[0]? user.activities[0].replace("™",'').toLowerCase() : undefined;
         });
         activitiesPerCategory = [...new Set(activitiesPerCategory)];
         return (
             <div 
-                key={i+'i'}
+                key={uuid()}
                 style={styles[category] || {}}
             >
                 <h3 style={styles[category + '-header'] || {}}>{ CATEGORY_LABELS[category] }</h3>
                 { 
-                    categorizedData[category].map((user, j) => {
+                    categorizedData[category].map((user) => {
                         return (
                             <span 
-                                key={j+'j'}
+                                key={uuid()}
                                 style={styles[category + '-name'] || {}}
                             > 
                                 { user.displayName }
                             </span>
                         );
-                    }).reduce((prev, curr, k) => [prev, (<span className="deemphasized-text" key={k+'k'}> and </span>), curr])
+                    }).reduce((prev, curr) => [prev, (<span key={uuid()} className="deemphasized-text" > and </span>), curr])
                 }
                 <div className="deemphasized-text">
                     { activitiesPerCategory.length > 0 && 'playing ' + activitiesPerCategory.join(', ') }
@@ -126,12 +130,12 @@ const buildCategories = (categorizedData) => {
     return (<>{ categoryJSX }</>);
 }
 
-const getData = async (setState, lastStartTime = 0) => {
+const getData = async (setState) => {
     const startTime = Date.now();
     try {
-        const res = await axios.get('http://207.153.21.155:1337/who_is_online');
-        if(res && res.data){
-            setState(processData(res.data));
+        const res = await axios.get('http://localhost:1337/who_is_online');
+        if(res && res.data && res.data.discordUsers){
+            setState(processData(res.data.discordUsers, res.data.twitchStatuses));
         } else {
             setState(DEFAULT_STATE);
         }
@@ -174,7 +178,7 @@ const App = () => {
                 { state.onlineUsers }
             </div>
             <div className="foreground">
-                <h1 className="main-title">{ NUMBER_STRINGS[state.onlineUsers] || state.onlineUsers } gamers online</h1> 
+                <h1 className="main-title">{ NUMBER_STRINGS[state.onlineUsers] || state.onlineUsers } players online</h1> 
                 { state.categorizedMap && buildCategories(state.categorizedMap) }
             </div>
         </div>
