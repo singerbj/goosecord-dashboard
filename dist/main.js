@@ -31810,8 +31810,8 @@ var getData = /*#__PURE__*/function () {
           case 4:
             res = _context.sent;
 
-            if (res && res.data) {
-              setState(Object(_DataProcessor__WEBPACK_IMPORTED_MODULE_7__["processData"])(res.data));
+            if (res && res.data && res.data.discordUsers) {
+              setState(Object(_DataProcessor__WEBPACK_IMPORTED_MODULE_7__["processData"])(res.data.discordUsers));
             } else {
               setState(DEFAULT_STATE);
             }

@@ -88,8 +88,8 @@ const getData = async (setState) => {
     const startTime = Date.now();
     try {
         const res = await axios.get('http://localhost:1337/who_is_online');
-        if(res && res.data){
-            setState(processData(res.data));
+        if(res && res.data && res.data.discordUsers){
+            setState(processData(res.data.discordUsers));
         } else {
             setState(DEFAULT_STATE);
         }
