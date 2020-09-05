@@ -87,7 +87,7 @@ const buildCategories = (categorizedData) => {
 const getData = async (setState) => {
     const startTime = Date.now();
     try {
-        const res = await axios.get('http://207.153.21.155:1337/who_is_online');
+        const res = await axios.get('http://localhost:1337/who_is_online');
         if(res && res.data){
             setState(processData(res.data));
         } else {

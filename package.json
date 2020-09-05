@@ -4,12 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm-run-all -p dev-watch server",
-    "server": "webpack-dev-server",
+    "start": "npm-run-all -p dev-watch dev-server",
+    "dev-server": "node server.js",
+    "server": "forever stopall; forever start server.js",
     "dev": "webpack --mode development",
     "dev-watch": "webpack --mode development --watch",
-    "prod": "webpack --mode production",
-    "prod-watch": "webpack --mode production --watch",
     "deploy": "ssh pi@kiosk 'sudo reboot'"
   },
   "engines": {
