@@ -11,9 +11,6 @@
     "dev-watch": "webpack --mode development --watch",
     "deploy": "ssh pi@kiosk 'sudo reboot'"
   },
-  "engines": {
-    "node": ">=11.0.0 <12.0.0"
-  },
   "author": "",
   "license": "ISC",
   "dependencies": {
