@@ -49,7 +49,7 @@ const getSortedList = (data) => {
     return list;
 };
 
-const getCategorizedMap = (data) => {
+const getCategorizedMap = (data, twitchStatuses) => {
     let categoriesObj = {
         streaming: [],
         inVoice: [],
@@ -57,6 +57,13 @@ const getCategorizedMap = (data) => {
         online: [],
         offline: []
     };
+    
+    Object.keys(twitchStatuses).forEach((twitchUsername) => {
+        if(twitchStatuses[twitchUsername].streaming){
+            categoriesObj.streaming.push(twitchUsername);
+        }
+    });
+
     Object.keys(data).forEach((displayName) => {
         let user = {
             ...data[displayName],
@@ -92,11 +99,11 @@ const getCategorizedMap = (data) => {
     return categoriesObj;
 };
 
-export const processData = (data) => {
-    const filteredData = filterActivities(data);
+export const processData = (discordUsers, twitchStatuses) => {
+    const filteredData = filterActivities(discordUsers);
     const sortedList = getSortedList(filteredData);
     const onlineUsers = getOnlineUsers(filteredData);
-    const categorizedMap = getCategorizedMap(filteredData);
+    const categorizedMap = getCategorizedMap(filteredData, twitchStatuses);
 
     return {
         map: filteredData,

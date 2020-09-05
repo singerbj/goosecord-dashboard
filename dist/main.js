@@ -31811,7 +31811,7 @@ var getData = /*#__PURE__*/function () {
             res = _context.sent;
 
             if (res && res.data && res.data.discordUsers) {
-              setState(Object(_DataProcessor__WEBPACK_IMPORTED_MODULE_7__["processData"])(res.data.discordUsers));
+              setState(Object(_DataProcessor__WEBPACK_IMPORTED_MODULE_7__["processData"])(res.data.discordUsers, res.data.twitchStatuses));
             } else {
               setState(DEFAULT_STATE);
             }
@@ -31943,7 +31943,7 @@ var getSortedList = function getSortedList(data) {
   return list;
 };
 
-var getCategorizedMap = function getCategorizedMap(data) {
+var getCategorizedMap = function getCategorizedMap(data, twitchStatuses) {
   var categoriesObj = {
     streaming: [],
     inVoice: [],
@@ -31951,6 +31951,11 @@ var getCategorizedMap = function getCategorizedMap(data) {
     online: [],
     offline: []
   };
+  Object.keys(twitchStatuses).forEach(function (twitchUsername) {
+    if (twitchStatuses[twitchUsername].streaming) {
+      categoriesObj.streaming.push(twitchUsername);
+    }
+  });
   Object.keys(data).forEach(function (displayName) {
     var user = _objectSpread(_objectSpread({}, data[displayName]), {}, {
       displayName: displayName
@@ -31989,11 +31994,11 @@ var getCategorizedMap = function getCategorizedMap(data) {
   return categoriesObj;
 };
 
-var processData = function processData(data) {
-  var filteredData = filterActivities(data);
+var processData = function processData(discordUsers, twitchStatuses) {
+  var filteredData = filterActivities(discordUsers);
   var sortedList = getSortedList(filteredData);
   var onlineUsers = getOnlineUsers(filteredData);
-  var categorizedMap = getCategorizedMap(filteredData);
+  var categorizedMap = getCategorizedMap(filteredData, twitchStatuses);
   return {
     map: filteredData,
     categorizedMap: categorizedMap,

@@ -89,7 +89,7 @@ const getData = async (setState) => {
     try {
         const res = await axios.get('http://localhost:1337/who_is_online');
         if(res && res.data && res.data.discordUsers){
-            setState(processData(res.data.discordUsers));
+            setState(processData(res.data.discordUsers, res.data.twitchStatuses));
         } else {
             setState(DEFAULT_STATE);
         }
