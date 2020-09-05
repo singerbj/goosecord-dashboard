@@ -60,7 +60,7 @@ const getCategorizedMap = (data, twitchStatuses) => {
     
     Object.keys(twitchStatuses).forEach((twitchUsername) => {
         if(twitchStatuses[twitchUsername].streaming){
-            categoriesObj.streaming.push(twitchUsername);
+            categoriesObj.streaming.push({ displayName: twitchUsername });
         }
     });
 

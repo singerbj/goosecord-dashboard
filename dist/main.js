@@ -31953,7 +31953,9 @@ var getCategorizedMap = function getCategorizedMap(data, twitchStatuses) {
   };
   Object.keys(twitchStatuses).forEach(function (twitchUsername) {
     if (twitchStatuses[twitchUsername].streaming) {
-      categoriesObj.streaming.push(twitchUsername);
+      categoriesObj.streaming.push({
+        displayName: twitchUsername
+      });
     }
   });
   Object.keys(data).forEach(function (displayName) {
