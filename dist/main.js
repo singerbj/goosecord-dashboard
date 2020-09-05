@@ -29705,24 +29705,6 @@ var runtime = (function (exports) {
   var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
   var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
 
-  function define(obj, key, value) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-    return obj[key];
-  }
-  try {
-    // IE 8 has a broken Object.defineProperty that only works on DOM objects.
-    define({}, "");
-  } catch (err) {
-    define = function(obj, key, value) {
-      return obj[key] = value;
-    };
-  }
-
   function wrap(innerFn, outerFn, self, tryLocsList) {
     // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
     var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
@@ -29793,19 +29775,16 @@ var runtime = (function (exports) {
     Generator.prototype = Object.create(IteratorPrototype);
   GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
   GeneratorFunctionPrototype.constructor = GeneratorFunction;
-  GeneratorFunction.displayName = define(
-    GeneratorFunctionPrototype,
-    toStringTagSymbol,
-    "GeneratorFunction"
-  );
+  GeneratorFunctionPrototype[toStringTagSymbol] =
+    GeneratorFunction.displayName = "GeneratorFunction";
 
   // Helper for defining the .next, .throw, and .return methods of the
   // Iterator interface in terms of a single ._invoke method.
   function defineIteratorMethods(prototype) {
     ["next", "throw", "return"].forEach(function(method) {
-      define(prototype, method, function(arg) {
+      prototype[method] = function(arg) {
         return this._invoke(method, arg);
-      });
+      };
     });
   }
 
@@ -29824,7 +29803,9 @@ var runtime = (function (exports) {
       Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
     } else {
       genFun.__proto__ = GeneratorFunctionPrototype;
-      define(genFun, toStringTagSymbol, "GeneratorFunction");
+      if (!(toStringTagSymbol in genFun)) {
+        genFun[toStringTagSymbol] = "GeneratorFunction";
+      }
     }
     genFun.prototype = Object.create(Gp);
     return genFun;
@@ -30094,7 +30075,7 @@ var runtime = (function (exports) {
   // unified ._invoke helper method.
   defineIteratorMethods(Gp);
 
-  define(Gp, toStringTagSymbol, "Generator");
+  Gp[toStringTagSymbol] = "Generator";
 
   // A Generator should always return itself as the iterator object when the
   // @@iterator function is called on it. Some browsers' implementations of the
@@ -31743,6 +31724,30 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 
 
+ // const PSN = require('pxs-psn-api');
+// const psn = new PSN({
+//     lang: "en",  //(default value en)
+//     region: "hk",  // server region(default value us)
+//     refresh_token: null, //refresh_token(default value null)
+//     access_token: null  //access_token(default value null)
+// });
+// async function main() {
+//     try {
+//         console.log(process.env.npsso);
+//         // access token is used to call other api, and refresh token is used to get new access_token when it's expired
+//         await psn.auth(process.env.npsso);
+//         // const { access_token, refresh_token }
+//         console.log(psn.access_token, psn.refresh_token);
+//         // get user profile with access_token
+//         const profile = await psn.getProfile("DJ-K0SH3R");
+//         console.log(profile);
+//         const summary = await psn.getUserFriends("DJ-K0SH3R");
+//         console.log(summary);
+//     } catch (e) {
+//         console.log('error: ', e);
+//     }
+// }
+// main();
 
 var REQUEST_INTERVAL = 3000;
 var DEFAULT_STATE = {};
@@ -31753,6 +31758,7 @@ var CATEGORY_LABELS = {
   offline: 'offline'
 };
 var NUMBER_STRINGS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "twenty one", "twenty two", "twenty three", "twenty four", "twenty five"];
+var IFRAME_URL_ROOT = "https://player.twitch.tv/?html5&parent=localhost&channel=";
 var styles = {
   offline: {
     color: "#666"
@@ -31760,6 +31766,18 @@ var styles = {
   'offline-header': {
     color: "#666"
   }
+};
+
+var getPSNFriends = function getPSNFriends() {
+  return new Promise(function (resolve, reject) {
+    psn.getFriends(function (error, data) {
+      if (error) {
+        reject(error);
+      }
+
+      resolve(data);
+    });
+  });
 };
 
 var buildCategories = function buildCategories(categorizedData) {
@@ -31797,7 +31815,7 @@ var buildCategories = function buildCategories(categorizedData) {
 
 var getData = /*#__PURE__*/function () {
   var _ref = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee(setState) {
-    var startTime, res, now, elapsedTime;
+    var startTime, res, iframe, twitchUsernames, streaming, now, elapsedTime;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -31812,6 +31830,28 @@ var getData = /*#__PURE__*/function () {
 
             if (res && res.data && res.data.discordUsers) {
               setState(Object(_DataProcessor__WEBPACK_IMPORTED_MODULE_7__["processData"])(res.data.discordUsers, res.data.twitchStatuses));
+
+              if (res.data.twitchStatuses) {
+                iframe = document.getElementById('iframe');
+                twitchUsernames = ['fishmobile', 'breazyb', 'riogoose'];
+                streaming = false;
+                twitchUsernames.forEach(function (twitchUsername) {
+                  if (twitchUsername === 'dougisraw' || res.data.twitchStatuses.fishmobile && res.data.twitchStatuses[twitchUsername].streaming) {
+                    streaming = true;
+
+                    if (iframe.src !== IFRAME_URL_ROOT + twitchUsername) {
+                      iframe.src = IFRAME_URL_ROOT + twitchUsername;
+                      iframe.style.opacity = 1;
+                      document.body.classList.add('twitch');
+                    }
+                  }
+                });
+
+                if (!streaming) {
+                  iframe.style.opacity = 0;
+                  document.body.classList.remove('twitch');
+                }
+              }
             } else {
               setState(DEFAULT_STATE);
             }
@@ -31860,6 +31900,8 @@ var App = function App() {
 
   Object(react__WEBPACK_IMPORTED_MODULE_5__["useEffect"])(function () {
     getData(setState);
+    var iframe = document.getElementById('iframe');
+    iframe.height = document.body.scrollHeight;
   }, []);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {
     className: "background"
@@ -32074,10 +32116,24 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var div = document.createElement('div');
-div.id = "app";
-document.body.appendChild(div);
-react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_App__WEBPACK_IMPORTED_MODULE_2__["default"], null), document.getElementById("app"));
+
+window.onload = function () {
+  var iframe = document.createElement('iframe');
+  iframe.id = "iframe";
+  document.body.appendChild(iframe);
+  window.addEventListener('DOMContentLoaded', function (e) {
+    iframe.height = document.body.scrollHeight;
+  });
+  window.addEventListener('DOMContentLoaded', function (e) {
+    iframe.height = document.body.scrollHeight;
+  });
+
+  window.onresize = function reportWindowSize() {
+    iframe.height = document.body.scrollHeight;
+  };
+
+  react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_App__WEBPACK_IMPORTED_MODULE_2__["default"], null), document.getElementById("app"));
+};
 
 /***/ })
 

@@ -12,22 +12,35 @@
             color: #ccc;
             font-size: 3em;
             overflow: hidden;
+            width: 100%;
+            height: 100vh;
+            margin: 0;
         }
+
+        body.twitch {
+            font-size: 1em;
+        }
+        
         h1, h2, h3, h4, h5 {
             font-family: 'Alata', sans-serif;
             margin-top: 0.15em;
             margin-bottom: 0;
             color: #aaa;
+            width: max-content;
         }
         .main-title {
             color: #ccc;
+        }
+        body.twitch .main-title {
+            background: #111;
+            font-size: 4em;
         }
         .deemphasized-text {
             font-size: 0.60em;
             color: #666;
         }
         .background {
-            z-index: 0;
+            z-index: 1;
             position: absolute;
             top: -0.25em;
             left: 0px;
@@ -41,15 +54,24 @@
         .foreground {
             z-index: 999;
             position: absolute;
+            height: 100%;
+        }
+        body.twitch .foreground {
+            background: #111;
+            width: 25%;
+            padding: 10px;
+        }
+        #iframe {
+            z-index: 0;
+            margin-left: 25%;
+            width: 75%;
+            border-width: 0px;
+            position: fixed;
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <!-- src="https://player.twitch.tv/?channel=sdimitriss&html5&parent=localhost" -->
-    <iframe
-        id="iframe"
-        src="https://multitwitch.tv/ifrostbolt"
-        style="width: 100%; height: 500px;">
-    </iframe>
+    <div id="app"></div>
 </body>
 </html>
