@@ -31833,10 +31833,10 @@ var getData = /*#__PURE__*/function () {
 
               if (res.data.twitchStatuses) {
                 iframe = document.getElementById('iframe');
-                twitchUsernames = ['fishmobile', 'breazyb', 'riogoose'];
+                twitchUsernames = ['fishmobile', 'breazyb', 'riogoose', 'djk0sh3r'];
                 streaming = false;
                 twitchUsernames.forEach(function (twitchUsername) {
-                  if (twitchUsername === 'dougisraw' || res.data.twitchStatuses.fishmobile && res.data.twitchStatuses[twitchUsername].streaming) {
+                  if (res.data.twitchStatuses[twitchUsername] && res.data.twitchStatuses[twitchUsername].streaming) {
                     streaming = true;
 
                     if (iframe.src !== IFRAME_URL_ROOT + twitchUsername) {

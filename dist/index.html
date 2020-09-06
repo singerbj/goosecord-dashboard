@@ -7,6 +7,7 @@
     <title>Goosecord Dashboard</title>
     <style>
         body {
+            transition: font-size 2s;
             font-family: 'Roboto', sans-serif;
             background: #111;
             color: #ccc;
@@ -18,6 +19,7 @@
         }
 
         body.twitch {
+            transition: font-size 2s;
             font-size: 1em;
         }
         
@@ -29,9 +31,11 @@
             width: max-content;
         }
         .main-title {
+            transition: font-size 2s;
             color: #ccc;
         }
         body.twitch .main-title {
+            transition: font-size 2s;
             background: #111;
             font-size: 4em;
         }
@@ -52,11 +56,13 @@
             opacity: 0.1;
         }
         .foreground {
+            transition: width 2s;
             z-index: 999;
             position: absolute;
             height: 100%;
         }
         body.twitch .foreground {
+            transition: width 2s;
             background: #111;
             width: 25%;
             padding: 10px;
