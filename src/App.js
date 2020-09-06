@@ -141,7 +141,7 @@ const getData = async (setState) => {
                 const twitchUsernames = ['fishmobile', 'breazyb', 'riogoose', 'djk0sh3r'];
                 let streaming = false;
                 twitchUsernames.forEach((twitchUsername) => {
-                    if(res.data.twitchStatuses[twitchUsername] && res.data.twitchStatuses[twitchUsername].streaming){
+                    if(!streaming && res.data.twitchStatuses[twitchUsername] && res.data.twitchStatuses[twitchUsername].streaming){
                         streaming = true;
                         if(iframe.src !== IFRAME_URL_ROOT + twitchUsername){
                             iframe.src = IFRAME_URL_ROOT + twitchUsername;
@@ -153,6 +153,11 @@ const getData = async (setState) => {
                 if(!streaming){
                     iframe.style.opacity = 0;
                     document.body.classList.remove('twitch')
+                } else {
+                    var allowMatureButton = document.querySelectorAll('[data-a-target="player-overlay-mature-accept"]')[0];
+                    if(allowMatureButton){
+                        allowMatureButton.click();
+                    }
                 }
             }
         } else {

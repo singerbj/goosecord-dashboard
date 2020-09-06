@@ -31815,7 +31815,7 @@ var buildCategories = function buildCategories(categorizedData) {
 
 var getData = /*#__PURE__*/function () {
   var _ref = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee(setState) {
-    var startTime, res, iframe, twitchUsernames, streaming, now, elapsedTime;
+    var startTime, res, iframe, twitchUsernames, streaming, allowMatureButton, now, elapsedTime;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -31836,7 +31836,7 @@ var getData = /*#__PURE__*/function () {
                 twitchUsernames = ['fishmobile', 'breazyb', 'riogoose', 'djk0sh3r'];
                 streaming = false;
                 twitchUsernames.forEach(function (twitchUsername) {
-                  if (res.data.twitchStatuses[twitchUsername] && res.data.twitchStatuses[twitchUsername].streaming) {
+                  if (!streaming && res.data.twitchStatuses[twitchUsername] && res.data.twitchStatuses[twitchUsername].streaming) {
                     streaming = true;
 
                     if (iframe.src !== IFRAME_URL_ROOT + twitchUsername) {
@@ -31850,6 +31850,12 @@ var getData = /*#__PURE__*/function () {
                 if (!streaming) {
                   iframe.style.opacity = 0;
                   document.body.classList.remove('twitch');
+                } else {
+                  allowMatureButton = document.querySelectorAll('[data-a-target="player-overlay-mature-accept"]')[0];
+
+                  if (allowMatureButton) {
+                    allowMatureButton.click();
+                  }
                 }
               }
             } else {
