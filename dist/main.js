@@ -31786,9 +31786,9 @@ var buildCategories = function buildCategories(categorizedData) {
   });
   var categoryJSX = keysArray.map(function (category) {
     var activitiesPerCategory = categorizedData[category].filter(function (user) {
-      return user.activities[0] ? user.activities[0].replace("™", '') : undefined;
+      return user.activities && user.activities[0] ? user.activities[0].replace("™", '') : undefined;
     }).map(function (user, j) {
-      return user.activities[0] ? user.activities[0].replace("™", '').toLowerCase() : undefined;
+      return user.activities && user.activities[0] ? user.activities[0].replace("™", '').toLowerCase() : undefined;
     });
     activitiesPerCategory = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_4___default()(new Set(activitiesPerCategory));
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("div", {

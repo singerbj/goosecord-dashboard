@@ -98,9 +98,9 @@ const buildCategories = (categorizedData) => {
     const keysArray = Object.keys(categorizedData).filter((key) => categorizedData[key].length > 0);
     const categoryJSX = keysArray.map((category) => {
         let activitiesPerCategory = categorizedData[category].filter((user) => {
-            return user.activities[0] ? user.activities[0].replace("™",'') : undefined;
+            return user.activities && user.activities[0] ? user.activities[0].replace("™",'') : undefined;
         }).map((user, j) => {
-            return user.activities[0]? user.activities[0].replace("™",'').toLowerCase() : undefined;
+            return user.activities && user.activities[0]? user.activities[0].replace("™",'').toLowerCase() : undefined;
         });
         activitiesPerCategory = [...new Set(activitiesPerCategory)];
         return (
